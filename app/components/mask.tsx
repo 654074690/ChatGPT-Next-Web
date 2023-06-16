@@ -185,12 +185,7 @@ function ContextPromptItem(props: {
         className={chatStyle["context-content"]}
         rows={focusingInput ? 5 : 1}
         onFocus={() => setFocusingInput(true)}
-        onBlur={() => {
-          setFocusingInput(false);
-          // If the selection is not removed when the user loses focus, some
-          // extensions like "Translate" will always display a floating bar
-          window?.getSelection()?.removeAllRanges();
-        }}
+        onBlur={() => setFocusingInput(false)}
         onInput={(e) =>
           props.update({
             ...props.prompt,

@@ -1,4 +1,3 @@
-import { getClientConfig } from "../config/client";
 import { ACCESS_CODE_PREFIX } from "../constant";
 import { ChatMessage, ModelType, useAccessStore } from "../store";
 import { ChatGPTApi } from "./platforms/openai";
@@ -94,11 +93,7 @@ export class ClientApi {
     // Please do not modify this message
 
     console.log("[Share]", msgs);
-    const clientConfig = getClientConfig();
-    const proxyUrl = "/sharegpt";
-    const rawUrl = "https://sharegpt.com/api/conversations";
-    const shareUrl = clientConfig?.isApp ? rawUrl : proxyUrl;
-    const res = await fetch(shareUrl, {
+    const res = await fetch("/sharegpt", {
       body: JSON.stringify({
         avatarUrl,
         items: msgs,

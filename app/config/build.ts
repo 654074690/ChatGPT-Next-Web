@@ -21,7 +21,6 @@ export const getBuildConfig = () => {
   return {
     commitId: COMMIT_ID,
     buildMode: process.env.BUILD_MODE ?? "standalone",
-    isApp: !!process.env.BUILD_APP,
   };
 };
 

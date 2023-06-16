@@ -286,12 +286,9 @@ export function Settings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const clientConfig = useMemo(() => getClientConfig(), []);
-  const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
-
   return (
     <ErrorBoundary>
-      <div className="window-header" data-tauri-drag-region>
+      <div className="window-header">
         <div className="window-header-title">
           <div className="window-header-main-title">
             {Locale.Settings.Title}
@@ -488,7 +485,7 @@ export function Settings() {
         </List>
 
         <List>
-          {showAccessCode ? (
+          {enabledAccessControl ? (
             <ListItem
               title={Locale.Settings.AccessCode.Title}
               subTitle={Locale.Settings.AccessCode.SubTitle}

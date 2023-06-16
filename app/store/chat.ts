@@ -11,7 +11,6 @@ import { StoreKey } from "../constant";
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
 import { prettyObject } from "../utils/format";
-import { estimateTokenLength } from "../utils/token";
 
 export type ChatMessage = RequestMessage & {
   date: string;
@@ -103,7 +102,7 @@ interface ChatStore {
 }
 
 function countMessages(msgs: ChatMessage[]) {
-  return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
+  return msgs.reduce((pre, cur) => pre + cur.content.length, 0);
 }
 
 export const useChatStore = create<ChatStore>()(
@@ -227,7 +226,6 @@ export const useChatStore = create<ChatStore>()(
 
       onNewMessage(message) {
         get().updateCurrentSession((session) => {
-          session.messages = session.messages.concat();
           session.lastUpdate = Date.now();
         });
         get().updateStat(message);
@@ -274,7 +272,8 @@ export const useChatStore = create<ChatStore>()(
 
         // save user's and bot's message
         get().updateCurrentSession((session) => {
-          session.messages = session.messages.concat([userMessage, botMessage]);
+          session.messages.push(userMessage);
+          session.messages.push(botMessage);
         });
 
         // make request
@@ -287,9 +286,7 @@ export const useChatStore = create<ChatStore>()(
             if (message) {
               botMessage.content = message;
             }
-            get().updateCurrentSession((session) => {
-              session.messages = session.messages.concat();
-            });
+            set(() => ({}));
           },
           onFinish(message) {
             botMessage.streaming = false;
@@ -301,6 +298,7 @@ export const useChatStore = create<ChatStore>()(
               sessionIndex,
               botMessage.id ?? messageIndex,
             );
+            set(() => ({}));
           },
           onError(error) {
             const isAborted = error.message.includes("aborted");
@@ -313,9 +311,8 @@ export const useChatStore = create<ChatStore>()(
             botMessage.streaming = false;
             userMessage.isError = !isAborted;
             botMessage.isError = !isAborted;
-            get().updateCurrentSession((session) => {
-              session.messages = session.messages.concat();
-            });
+
+            set(() => ({}));
             ChatControllerPool.remove(
               sessionIndex,
               botMessage.id ?? messageIndex,
